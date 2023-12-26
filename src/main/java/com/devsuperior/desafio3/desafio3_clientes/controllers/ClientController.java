@@ -1,8 +1,11 @@
 package com.devsuperior.desafio3.desafio3_clientes.controllers;
 
 import com.devsuperior.desafio3.desafio3_clientes.dto.ClientDTO;
+import com.devsuperior.desafio3.desafio3_clientes.entity.Client;
 import com.devsuperior.desafio3.desafio3_clientes.services.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +21,12 @@ public class ClientController {
     @GetMapping(value = "/{id}")
     public ResponseEntity<ClientDTO> findById(@PathVariable Long id) {
         ClientDTO dto = service.findById(id);
+        return ResponseEntity.ok(dto);
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<ClientDTO>> findAll(Pageable pageable) {
+        Page<ClientDTO> dto = service.findAll(pageable);
         return ResponseEntity.ok(dto);
     }
 
