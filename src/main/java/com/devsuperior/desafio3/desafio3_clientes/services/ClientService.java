@@ -3,8 +3,11 @@ package com.devsuperior.desafio3.desafio3_clientes.services;
 import com.devsuperior.desafio3.desafio3_clientes.dto.ClientDTO;
 import com.devsuperior.desafio3.desafio3_clientes.entity.Client;
 import com.devsuperior.desafio3.desafio3_clientes.repositories.ClientRepository;
+import com.devsuperior.desafio3.desafio3_clientes.services.exceptions.DataBaseException;
 import com.devsuperior.desafio3.desafio3_clientes.services.exceptions.ResourceNotFoundException;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -39,17 +42,28 @@ public class ClientService {
 
     @Transactional
     public ClientDTO update(Long id, ClientDTO dto) {
-        Client entity = repository.getReferenceById(id);
-        copyDtoToEntity(dto, entity);
-        entity = repository.save(entity);
-        return new ClientDTO(entity);
+        try {
+            Client entity = repository.getReferenceById(id);
+            copyDtoToEntity(dto, entity);
+            entity = repository.save(entity);
+            return new ClientDTO(entity);
+        } catch (EntityNotFoundException e) {
+            throw new ResourceNotFoundException("Cliente não encontrado.");
+        }
+
     }
 
     @Transactional
     public void delete(Long id) {
-        repository.deleteById(id);
-    }
+        try {
+            repository.deleteById(id);
+        } catch (EntityNotFoundException e) {
+            throw new ResourceNotFoundException("Cliente não encontrado.");
+        } catch (DataIntegrityViolationException e) {
+            throw new DataBaseException("Erro! Falha de integridade referencial.");
+        }
 
+    }
 
     private void copyDtoToEntity(ClientDTO dto, Client entity) {
         entity.setName(dto.getName());
@@ -59,3 +73,4 @@ public class ClientService {
         entity.setChildren(dto.getChildren());
     }
 }
+
