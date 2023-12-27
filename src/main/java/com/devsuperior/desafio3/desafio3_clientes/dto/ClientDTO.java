@@ -1,16 +1,22 @@
 package com.devsuperior.desafio3.desafio3_clientes.dto;
 
 import com.devsuperior.desafio3.desafio3_clientes.entity.Client;
+import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
 
 public class ClientDTO {
 
     private Long id;
+    @NotBlank(message = "Name field is required.")
     private String name;
+    @NotBlank(message = "CPF field is required.")
     private String cpf;
+    @Min(value = 1, message = "Income must be at least 1.00 or greater.")
     private Double income;
+    @PastOrPresent(message = "Birth date can not be in the future.")
     private LocalDate birthDate;
+    @Min(value = 0, message = "Children must be 0 or greater.")
     private Integer children;
 
     public ClientDTO() {

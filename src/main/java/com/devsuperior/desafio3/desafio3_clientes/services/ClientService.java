@@ -11,6 +11,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -21,7 +22,7 @@ public class ClientService {
     @Transactional(readOnly = true)
     public ClientDTO findById(Long id) {
         Client client = repository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("Resource not found")
+                () -> new ResourceNotFoundException("Id: " + id + " not found")
         );
         return new ClientDTO(client);
     }
@@ -53,7 +54,7 @@ public class ClientService {
 
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.SUPPORTS)
     public void delete(Long id) {
         try {
             repository.deleteById(id);
